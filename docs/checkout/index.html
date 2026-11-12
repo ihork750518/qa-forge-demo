@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QA Forge Pro | Sandbox Checkout</title>
+<style>body{font:16px system-ui,sans-serif;background:#0c1221;color:#e9eef8;margin:0}main{max-width:650px;margin:7vh auto;padding:24px}a{color:#8fc8ff}h1{font-size:36px}p{color:#b9c5d9;line-height:1.6}.card{background:#151f32;border:1px solid #2a3851;padding:26px;border-radius:14px}label{display:block;margin-top:18px}input{display:block;width:100%;padding:12px;margin-top:7px;box-sizing:border-box;background:#0c1221;border:1px solid #52617c;border-radius:7px;color:#fff}button{background:#62c5f8;color:#07131d;border:0;border-radius:8px;padding:14px 20px;margin-top:22px;font-weight:700;cursor:pointer}button:disabled{opacity:.55;cursor:not-allowed}.notice{color:#ffd891}#status{font-size:14px;min-height:20px}</style>
+<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script></head>
+<body><main><a href="../">← QA Forge</a><h1>QA Forge Pro v1.0</h1><p><strong>$29 · One-time license</strong></p>
+<div class="card"><h2>Sandbox checkout test</h2><p class="notice">TEST MODE ONLY. No real payments or product downloads. This is a setup page, not a public sales checkout.</p>
+<p>Enter your Paddle <strong>sandbox client-side token</strong> and the <strong>sandbox price ID</strong> from Catalog → Products → Prices. These are not API keys. Do not enter a secret API key.</p>
+<label for="token">Sandbox client-side token</label><input id="token" autocomplete="off" placeholder="test_...">
+<label for="price">Sandbox price ID</label><input id="price" autocomplete="off" placeholder="pri_...">
+<button id="buy" type="button">Test checkout · $29</button><p id="status" role="status" aria-live="polite"></p>
+</div><p>Delivery is intentionally disabled until a server-side webhook validates completed transactions. Never distribute the private ZIP through this page.</p></main>
+<script>
+document.getElementById('buy').addEventListener('click', function () {
+  const status=document.getElementById('status');
+  const token=document.getElementById('token').value.trim();
+  const priceId=document.getElementById('price').value.trim();
+  if (!token.startsWith('test_') || !/^pri_[a-z0-9]+$/i.test(priceId)) {
+    status.textContent='Enter a sandbox client-side token (test_...) and a valid price ID (pri_...).';return;
+  }
+  if (!window.Paddle) {status.textContent='Paddle.js did not load. Check network or browser extensions.';return;}
+  try {
+    window.Paddle.Environment.set('sandbox');
+    window.Paddle.Initialize({token});
+    window.Paddle.Checkout.open({items:[{priceId,quantity:1}]});
+    status.textContent='Opening sandbox checkout...';
+  } catch (error) {status.textContent='Checkout could not open: '+String(error.message || error);}
+});
+</script></body></html>
